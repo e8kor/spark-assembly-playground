@@ -8,11 +8,8 @@ object Settings {
     Seq(
       organization := "com.infare.scheduler",
       scalaVersion := "2.11.12",
-      //      resolvers += "Sonatype Nexus Repository Manager" at "http://nexus.infare.net:8000/repository/maven-releases",
       resolvers += "jitpack" at "https://jitpack.io",
       credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
-      //      runMain in Compile := Defaults.runMainTask(fullClasspath in Compile, runner in(Compile, run)),
-
       parallelExecution := false,
       javaOptions ++= Seq(
         "-Xms512M",
@@ -20,7 +17,8 @@ object Settings {
         "-XX:MaxPermSize=2048M",
         "-XX:+CMSClassUnloadingEnabled"
       ),
-      scalacOptions := Seq("-feature",
+      scalacOptions := Seq(
+        "-feature",
         "-deprecation",
         "-Xfatal-warnings",
         "-Ypatmat-exhaust-depth", "off"
@@ -36,7 +34,9 @@ object Settings {
           val oldStrategy = (assemblyMergeStrategy in assembly).value
           oldStrategy(x)
       },
-      assemblyShadeRules in assembly ++= Seq(),
+      assemblyShadeRules in assembly ++= Seq(
+        ShadeRule.rename("shapeless.**" -> "shaded_shapeless.@1").inAll
+      ),
       assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false),
       test in assembly := {}
     )
